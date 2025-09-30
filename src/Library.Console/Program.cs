@@ -20,7 +20,16 @@ services.AddScoped<IPatronService, PatronService>();
 services.AddScoped<BookService>();
 
 services.AddSingleton<JsonData>();
-services.AddSingleton<ConsoleApp>();
+services.AddSingleton<ConsoleApp>(provider =>
+{
+	var loanService = provider.GetRequiredService<ILoanService>();
+	var patronService = provider.GetRequiredService<IPatronService>();
+	var patronRepository = provider.GetRequiredService<IPatronRepository>();
+	var loanRepository = provider.GetRequiredService<ILoanRepository>();
+	var bookService = provider.GetRequiredService<BookService>();
+	var jsonData = provider.GetRequiredService<JsonData>();
+	return new ConsoleApp(loanService, patronService, patronRepository, loanRepository, bookService, jsonData);
+});
 
 var servicesProvider = services.BuildServiceProvider();
 
